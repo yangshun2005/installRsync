@@ -1,5 +1,6 @@
 #!/bin/bash
-# 备选方案：cp、scp、dump、cpio、dd、rsync、ftp，本例rsync
+
+# rsync tar包安装服务端，系统需要有rpm源gcc、c++、perl
 set -e
 export descIp=127.0.0.1
 export srcPath=/var/log/

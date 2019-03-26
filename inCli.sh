@@ -1,5 +1,6 @@
 #!/bin/bash
-# 备选方案：cp、scp、dump、cpio、dd、rsync、ftp,本例rsync
+# # rsync tar包安装客户端
+
 export srcIp=127.0.0.1
 export srcLevPath=/var/log/anaconda
 export descPath=/root/testsync/
@@ -29,3 +30,6 @@ chmod 600 /etc/rsyncC.pas
 #/usr/bin/rsync -avzP --delete --password-file=/etc/rsync.pas pic@$127.0.0.1::tools /rsync/
 
 /usr/local/rsync/bin/rsync -avzP --delete --password-file=/etc/rsyncC.pas pic@${srcIp}::${srcLevPath}  ${descPath}
+
+# 常见故障参考
+## http://www.bubuko.com/infodetail-2025163.html
