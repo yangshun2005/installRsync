@@ -7,11 +7,10 @@
 主要处理大数据场景下的数据备份
 ```
 
-##### rsync  已经过centos多机实测
+## rsync  已经过centos多机实测
 * 安装方法： 本实例时没有selinux、firewalld的脚本
-
-一、服务端设置及关键点
 ```
+一、服务端设置及关键点
 1\ rsync主要用于网络环境下的文件同步，有服务端和客户端，可以单向或双向对考，
 2\ 下载后，首先安装服务端：inSer.sh  本方法是使用tar包安装
 3\ 然后在客户端执行yum -y install rsync
@@ -105,4 +104,78 @@ $ vi /etc/rsyncC.pas
 $ /usr/bin/rsync -avz --progress --password-file=/etc/rsyncd.passwdroot@192.168.1.1::log /home/log
 
 
+```
+
+#### rsync语法规范
+```
+注意：rsync客户端和服务端相互联系传输文件时，须保证两个都可以直接在env变量里直接找到,客户端版本与服务端版本不必完全一致，大版本一致就可。
+	服务端默认端口873
+
+rsync工作模式：
+1、本地shell模式
+2、远程shell模式，此时可以利用ssh协议承载其数据传输
+3、列表模式，仅列出源大的内容： -nv
+4、服务器模式，rsync运行成守护进程，接受客户端大的数据传输请求，可以向服务器请求获取文件，也可以向服务端发送文件
+
+rsync语法格式：
+SYNOPSIS
+       Local:  rsync [OPTION...] SRC... [DEST]
+       Access via remote shell:
+         Pull: rsync [OPTION...] [USER@]HOST:SRC... [DEST]
+         Push: rsync [OPTION...] SRC... [USER@]HOST:DEST
+       Access via rsync daemon:
+         Pull: rsync [OPTION...] [USER@]HOST::SRC... [DEST]
+               rsync [OPTION...] rsync://[USER@]HOST[:PORT]/SRC... [DEST]
+         Push: rsync [OPTION...] SRC... [USER@]HOST::DEST
+               rsync [OPTION...] SRC... rsync://[USER@]HOST[:PORT]/DEST
+
+```
+
+#### 完整实例演示
+```
+1 服务端和客户端都需要安装rsync,
+    可以yum安装；也可以编译tar安装，方法参照inSer.sh脚本
+    服务端编辑两个文件/etc/rsyncd.conf和/etc/rsyncd.pwd
+    客户端编辑一个文件/etc/rsync.pas
+
+[root@c7-3 tmp]# cat /etc/rsyncd.conf
+[global]
+uid = nobody
+gid = nobody
+use chroot = no
+max connections = 20
+hosts allow = 10.211.55.0/24
+pid file = /var/run/rsyncd.pid
+log file = /var/log/rsyncd.log
+lock file = /var/run/rsyncd.lock
+transfer logging = yes
+log fomat = %t %a %m %f %b
+timeout = 300
+
+[pull_name]
+read only = yes
+path = /etc
+auth users = pic
+secrets file = /etc/rsync.pas
+timeout = 300
+
+[push_name]
+read only = no
+write only = yes
+path = /tmp/
+auth users = pic
+secrets file = /etc/rsync.pas
+timeout = 300
+
+
+[root@c7-3 tmp]# cat /etc/rsync.pas
+pic:pic999
+
+2 启动服务端： rsync --daemon --config=/etc/rsyncd.conf
+
+3 客户端操作： echo 'pic999' > /etc/rsync.pas
+
+从服务端拉取：  rsync --password-file=/etc/rsync.pas pic@10.211.55.7::pull_name /tmp/etc/ -avzPr --progress     //注意：采用daemon模式时，源目录没有斜杠/时仅是将该目录下文件拉取过来，并不会将该目录拉取过来，与local模式不同
+
+客户端 推送到服务端： rsync --password-file=/etc/rsync.pas /root/anaconda-ks.cfg pic@10.211.55.7::push_name/  -avzPr --progress
 ```
