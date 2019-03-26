@@ -39,7 +39,7 @@ timeout = 300
 read only = yes
 path = ${syncSrcPath}
 auth users = pic
-secrets file = /etc/rsync.pas
+secrets file = /etc/rsyncd.pwd
 timeout = 300
 
 [push_name]
@@ -47,13 +47,13 @@ read only = no
 write only = yes
 path = ${pushPath}
 auth users = pic
-secrets file = /etc/rsync.pas
+secrets file = /etc/rsyncd.pwd
 timeout = 300
 EOF
 
-echo 'pic:pic999'  > /etc/rsync.pas
+echo 'pic:pic999'  > /etc/rsyncd.pwd
 
-chmod 600 /etc/rsync.pas
+chmod 600 /etc/rsyncd.pwd
 ln -sv /usr/local/rsync/bin/rsync /usr/bin/
 
 # start
