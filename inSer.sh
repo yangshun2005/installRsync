@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # rsync tar包安装服务端，系统需要有rpm源gcc、c++、perl
-# 注意：脚本在使用时需要将变量descIp、srcPath、pushPath替换成自己的场景valvue
+# 注意：脚本在使用时需要将变量descIp、srcPath、pushPath替换成自己的场景valvue。
 set -e
-export descIp=10.211.55.0/24
-export syncSrcPath=/etc/
-export pushPath=/tmp/
+export descIp=10.211.55.0/24     # 接收客户端ip
+export syncSrcPath=/etc/			# 需要同步給客户端的目录
+export pushPath=/tmp/				# 需要接受客户端push到服务端的文件目录
 # install rsync
 yum -y install gcc gcc-c++ perl
 
