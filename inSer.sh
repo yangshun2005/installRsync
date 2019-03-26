@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # rsync tar包安装服务端，系统需要有rpm源gcc、c++、perl
+# 注意：脚本在使用时需要将变量descIp、srcPath替换成自己的场景valvue
 set -e
-export descIp=127.0.0.1
-export srcPath=/var/log/
+export descIp=10.211.55.0/24
+export syncSrcPath=/etc/
+export pushPath=/tmp/
 # install rsync
 yum -y install gcc gcc-c++ perl
 
@@ -24,20 +26,26 @@ cat << EOF > /etc/rsyncd.conf
 uid = nobody
 gid = nobody
 use chroot = no
-max connections = 30
+max connections = 20
 hosts allow = ${descIp}
 pid file = /var/run/rsyncd.pid
 log file = /var/log/rsyncd.log
 lock file = /var/run/rsyncd.lock
 transfer logging = yes
 log fomat = %t %a %m %f %b
-syslog facility = local3
 timeout = 300
 
-[pic]
+[synced_name]
 read only = yes
-path = ${srcPath}
-comment = pic
+path = ${syncSrcPath}
+auth users = pic
+secrets file = /etc/rsync.pas
+timeout = 300
+
+[push_name]
+read only = no
+write only = yes
+path = ${pushPath}
 auth users = pic
 secrets file = /etc/rsync.pas
 timeout = 300
@@ -46,13 +54,13 @@ EOF
 echo 'pic:pic999'  > /etc/rsync.pas
 
 chmod 600 /etc/rsync.pas
-chmod 755 -R /usr/local
+ln -sv /usr/local/rsync/bin/rsync /usr/bin/
 
 # start
-/usr/local/rsync/bin/rsync  --daemon
+/usr/local/rsync/bin/rsync  --daemon  --config=/etc/rsyncd.conf
 sleep 1
 rsync_serv_info=$(ss -tunlp |grep rsync)
-echo 'rsync service port : ' ${rsync_serv_info}
+echo 'rsync service INFO : ' ${rsync_serv_info}
 
 
 
