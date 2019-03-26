@@ -156,7 +156,7 @@ timeout = 300
 read only = yes
 path = /etc
 auth users = pic
-secrets file = /etc/rsync.pas
+secrets file = /etc/rsyncd.pwd
 timeout = 300
 
 [push_name]
@@ -164,7 +164,7 @@ read only = no
 write only = yes
 path = /tmp/
 auth users = pic
-secrets file = /etc/rsync.pas
+secrets file = /etc/rsyncd.pwd
 timeout = 300
 
 
