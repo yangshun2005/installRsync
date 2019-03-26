@@ -113,7 +113,7 @@ $ /usr/bin/rsync -avz --progress --password-file=/etc/rsyncd.passwdroot@192.168.
 
 rsync工作模式：
 1、本地shell模式
-2、远程shell模式，此时可以利用ssh协议承载其数据传输
+2、远程shell模式，此时可以利用ssh协议承载其数据传输:  -e ssh
 3、列表模式，仅列出源大的内容： -nv
 4、服务器模式，rsync运行成守护进程，接受客户端大的数据传输请求，可以向服务器请求获取文件，也可以向服务端发送文件
 
