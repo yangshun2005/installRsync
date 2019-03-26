@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # rsync tar包安装服务端，系统需要有rpm源gcc、c++、perl
-# 注意：脚本在使用时需要将变量descIp、srcPath替换成自己的场景valvue
+# 注意：脚本在使用时需要将变量descIp、srcPath、pushPath替换成自己的场景valvue
 set -e
 export descIp=10.211.55.0/24
 export syncSrcPath=/etc/
@@ -62,6 +62,6 @@ sleep 1
 rsync_serv_info=$(ss -tunlp |grep rsync)
 echo 'rsync service INFO : ' ${rsync_serv_info}
 
-
+# get rsyncd pid and sed rsyncd-conf then restart
 
 
